@@ -1,0 +1,679 @@
+---
+format:
+  docx:
+    reference-doc: custom-reference-doc.docx
+execute: 
+  eval: true
+  echo: false
+  warning: false
+---
+
+# Multi-tier framework global survey
+
+An h1 heading 👆
+
+An h2 heading 👇
+
+## Access to modern energy cooking solutions
+
+A text box 👇
+
+::: {custom-style="callout-box"}
+
+Cookstoves in Ethiopia were classified into four categories:
+
+**Three-stone stove.** A pot balanced on three stones over an open fire. Fuel use and emissions are high, and thermal
+efficiency and safety are low. Three-stone stoves usually use firewood, but other solid fuels may also be used.
+
+**Other self-built stove.** Locally produced using mud, metal, or other low-cost materials and following cultural
+practices. Other self-built stoves use biomass fuels. Although three-stone stoves are self-built stoves, they are
+not included in this category; throughout the report “self-built stove” refers to other self-built stoves.
+
+**Manufactured biomass stove.** Biomass cookstoves that are manufactured by a private company, nongovernmental
+organization, or community rather than by an individual households. Manufactured biomass stoves are designed
+to improve efficiency, cleanliness, and safety compared with three-stone and other self-built stoves.
+
+**Clean fuel stove.** Uses fuels with very low levels of polluting emissions, such as biogas, liquefied petroleum gas
+(LPG)/cooking gas, electricity, ethanol, natural gas, and solar. Such fuels often provide high technical performance
+in emissions and efficiency that is largely “stove independent.” In Ethiopia the most prevalent type of clean fuel
+stove is an electric stove.
+
+Ethiopian households commonly use injera baking stoves in addition to regular stoves for cooking. But information
+on injera baking stoves was not collected in the MTF survey, so the analysis focuses only on regular cooking stoves.
+
+:::
+
+Figure title with composite styling of figure number and title, respectively 👇
+
+[Table 2 &middot;]{custom-style="Figure num 2"} [Stove emissions tier]{custom-style="Figure title 2"}
+
+<!-- ::: {custom-style='Figure num 2'}
+Table 2 &middot;
+:::
+::: {custom-style='Figure title 2'}
+Stove emissions tier
+::: -->
+
+Table with thematic coloring and merged cells
+
+```{r}
+#| label: sketch stove tier table
+stove_tier <- tibble::tribble(
+  ~ fuel, ~ desc, ~ tier,
+  # firewood
+  "Firewood, dung, twigs, and leaves", "Three-stone, tripod, flat mud ring", 0,
+  "Firewood, dung, twigs, and leaves", "Conventional ICS", 1,
+  "Firewood, dung, twigs, and leaves", "ICS with chimney, rocket stove with conventional material for insulation", 2,
+  "Firewood, dung, twigs, and leaves", "Rocket stove with high insulation, rocket stove with chimney (not well sealed)", 3,
+  "Firewood, dung, twigs, and leaves", "Rocket stove with chimney (well sealed), rocket stove gasifier, batch feed gasifier", 4,
+  # charcoal
+  "Charcoal", "Traditional charcoal stoves", 0,
+  "Charcoal", "Old generation ICS", 1,
+  "Charcoal", "Conventional ICS", 2,
+  "Charcoal", "Advanced insulation charcoal stoves", 3,
+  "Charcoal", "Advanced secondary air charcoal stoves", 4,
+  # biomass
+  "Rice husks, pellets, and briquettes", "Natural draft gasifier (only pellets and briquettes)", 3,
+  "Rice husks, pellets, and briquettes", "Forced air", 4,
+  # electricity
+  "LPG and biogas; electricity", "", 5,
+)
+
+stove_tier |>
+  flextable::flextable() |>
+  flextable::set_header_labels(
+    values = list(
+      fuel = "Type of fuel",
+      desc = "Description of level",
+      tier = "Tier"
+    )
+  ) |>
+  flextable::merge_v(
+    j = "fuel"
+  ) |>
+  flextable::theme_zebra(
+    even_body = "#e8e8ea",
+    odd_body = "transparent"
+  ) |>
+  flextable::bg(bg = "#56b3e5", part = "header") |>
+  flextable::color(color = "white", part = "header") |>
+  flextable::border_outer(
+    border = officer::fp_border(color = "white"),
+    part = "header"
+  ) |>
+  flextable::border_inner_v(
+    border = officer::fp_border(color = "white"),
+    part = "header"
+  ) |>
+  flextable::border_inner_h(
+    border = officer::fp_border(color = "grey"),
+    part = "body"
+  ) |>
+  flextable::fontsize(size = 9, part = "all") |>
+  flextable::align(align = "center", part = "header") |>
+  flextable::align(j = ncol(stove_tier), align = "center", part = "body") |>
+  flextable::width(j = 1, width = 1.6) |>
+  flextable::width(j = 2, width = 4.5) |>
+  flextable::bold(j = 1, bold = TRUE, part = "body")
+
+```
+
+[Table 3 &middot;]{custom-style='Figure num 2'}
+[Distribution of regions, woredas, and households sampled for the Multi-Tier Framework survey]{custom-style='Figure title 2'}
+
+<!-- ::: {custom-style='Figure num'}
+Table 3 &middot;
+:::
+::: {custom-style='Figure title'}
+Distribution of regions, woredas, and households sampled for the Multi-Tier Framework survey
+::: -->
+
+```{r}
+
+sample_df <- tibble::tribble(
+  ~ region, ~ n_woredas, ~ n_ea_rural, ~ n_ea_urban, ~ n_ea_total, ~ n_hholds,
+  "Tigray", 14, 7, 10, 17, 204,
+  "Afar", 9, 9, 7, 16, 192,
+  "Amhara", 40, 32, 27, 59, 708,
+  "Oromiya", 64, 54, 37, 91, 1089,
+  "Somali", 8, 9, 6, 15, 180,
+  "Benishangul", 6, 6, 5, 11, 132,
+  "Southern Nations, Nationalities and Peoples (SNNP) Region", 32, 29, 23, 52, 624,
+  "Gambela", 5, 2, 3, 5, 60,
+  "Harari", 1, 1, 3, 4, 48,
+  "Addis, Ababa", 10, 0, 59, 59, 984,
+  "Dire, Dawa", 1, 2, 6, 8, 96,
+  "Total", 190, 151, 186, 337, 4317,
+)
+
+sample_df |>
+  flextable::flextable() |>
+  flextable::set_header_labels(
+    values = list(
+      region = "Region",
+      n_woredas = "Number of woredas",
+      n_ea_rural = "Rural",
+      n_ea_urban = "Urban",
+      n_ea_total = "Total",
+      n_hholds = "Number of households"
+    )
+  ) |>
+  flextable::add_header_row(
+    values = c("Region", "Number of woredas", "Number of enumeration areas", "Number of households"),
+    colwidths = c(1, 1, 3, 1)
+  ) |>
+  flextable::merge_v(
+    j = "region",
+    part = "header"
+  ) |>
+  flextable::merge_v(
+    j = "n_woredas",
+    part = "header"
+  ) |>
+  flextable::merge_v(
+    j = "n_hholds",
+    part = "header"
+  ) |>
+  flextable::bg(bg = "#56b3e5", part = "header") |>
+  flextable::color(color = "white", part = "header") |>
+  flextable::border_outer(
+    border = officer::fp_border(color = "white"),
+    part = "header"
+  ) |>
+  flextable::border_inner_v(
+    border = officer::fp_border(color = "white"),
+    part = "header"
+  ) |>
+  flextable::border_inner_h(
+    border = officer::fp_border(color = "white"),
+    part = "header"
+  ) |>
+  flextable::border_inner_h(
+    border = officer::fp_border(color = "grey"),
+    part = "body"
+  ) |>
+  flextable::fontsize(size = 9, part = "all") |>
+  flextable::align(align = "center", part = "header") |>
+  flextable::align(
+    j = c(2:6),
+    align = "center",
+    part = "body"
+  ) |>
+  flextable::width(j = 1, width = 2.5) |>
+  flextable::width(j = 6, width = 0.8) |>
+  flextable::bold(j = 1, bold = TRUE, part = "body") |>
+  flextable::bold(i = nrow(sample_df), bold = TRUE, part = "body")
+
+```
+
+# Access to electricity
+
+## MTF tiers
+
+<!-- Figures below -->
+
+[Figure 10 &middot;]{custom-style='Figure num 2'} [MTF Tier Distribution for access to electricity]{custom-style='Figure title 2'}
+
+<!-- ::: {custom-style='Figure num'}
+Figure 10 &middot;
+:::
+::: {custom-style='Figure title'}
+MTF Tier Distribution for access to electricity
+::: -->
+
+Column chart with tier color scheme.
+
+```{r}
+#| label: data for figure 10
+tier_distribution <- tibble::tribble(
+  ~group, ~tier_perc,
+  "Tier 0", 55.7,
+  "Tier 1", 11.6,
+  "Tier 2", 4.3,
+  "Tier 3", 16.9,
+  "Tier 4", 7.0,
+  "Tier 5", 4.5
+)
+
+nat_avg <- 44.3
+```
+
+```{r}
+#| label: sketch figure 10
+#| fig-width: 10
+#| fig-height: 5.625
+#| fig-align: center
+
+# tier colors extracted from the image
+tier_colors <- c(
+  "#c02227", # tier 0: red
+  "#f47b20", # tier 1: dark orange
+  "#faa83b", # tier 2: light orange
+  "#ffd967", # tier 3: yellow
+  "#8bc367", # tier 4: ligt green
+  "#00634f" # tier 5: dark green
+)
+
+ggplot2::ggplot(data = tier_distribution) +
+  # national average line first so that it's a background layer
+  ggplot2::geom_hline(yintercept = nat_avg, linetype = 3) +
+  # 
+  ggplot2::geom_col(mapping = ggplot2::aes(x = group, y = tier_perc, fill = group)) +
+  ggplot2::scale_fill_manual(values = tier_colors) +
+  # use ggrepel so that there's a line to each value
+  # avoids having to write another layer
+  ggrepel::geom_label_repel(
+    ggplot2::aes(
+      x = group, y = tier_perc,
+      label = scales::label_percent(
+        suffix = "%",
+        scale = 1,
+        accuracy = 0.1
+      )(tier_perc),
+      segment.color = tier_colors,
+      segment.size = 1,
+      fontface = "bold"
+    ),
+    min.segment.length = 0, # always draw a line from data to the label
+    # box.padding = 1,
+    label.padding = 0.5, # padding around label
+    label.size = NA, # remove the box around the label
+    size = 5,
+    nudge_y = 3
+  ) +
+  # ggplot2::geom_text(data = nat_avg) +
+  ggplot2::annotate(
+    geom = "text",
+    y = nat_avg + 2,
+    x = 3,
+    label = paste0(nat_avg, "%")
+  ) +
+  # remove padding between data and axis text
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.1))) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    panel.grid = ggplot2::element_blank(),
+    axis.line.x = ggplot2::element_line(),
+    axis.title = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    axis.text.y = ggplot2::element_blank(),
+    axis.text.x = ggplot2::element_text(face = "bold", size = ggplot2::rel(1.5)),
+    legend.position = "none"
+  )
+```
+
+
+[Figure 14 &middot;]{custom-style='Figure num 2'} [Access to electricity by regions]{custom-style='Figure title 2'}
+
+<!-- ::: {custom-style='Figure num'}
+Figure 14 &middot;
+:::
+::: {custom-style='Figure title'}
+Access to electricity by regions
+::: -->
+
+Faceted column chart with Ethiopia color scheme (i.e., one color per region)
+
+```{r}
+#| label: data for figure 14
+elec_access_by_region <- tibble::tribble(
+  ~ type, ~ region, ~ access_perc,
+  # grid access
+  "Grid access", "Tigray", 50.9,
+  "Grid access", "Amhara", 28.6,
+  "Grid access", "Oromiya", 26.7,
+  "Grid access", "SNNP", 30.1,
+  "Grid access", "Addis Ababa", 99.9,
+  # off-grid access
+  "Off-grid access", "Tigray", 36.9,
+  "Off-grid access", "Amhara", 22.5,
+  "Off-grid access", "Oromiya", 36.3,
+  "Off-grid access", "SNNP", 7.8,
+  "Off-grid access", "Addis Ababa", 0.0,
+  # No access
+  "No access", "Tigray", 12.3,
+  "No access", "Amhara", 48.7,
+  "No access", "Oromiya", 36.7,
+  "No access", "SNNP", 62.1,
+  "No access", "Addis Ababa", 0.1,
+) |>
+dplyr::mutate(
+  type = forcats::fct_inorder(type),
+  region = forcats::fct_inorder(region)
+)
+```
+
+```{r}
+#| label: sketch figure 18
+#| fig-width: 10
+#| fig-height: 5.625
+#| fig-align: center
+
+# use colors extracted from printed plot
+region_colors <- c(
+  "#a0a8b2",
+  "#0068b4",
+  "#57b3e5",
+  "#d5effc",
+  "#465865"
+)
+
+ggplot2::ggplot(data = elec_access_by_region) +
+  ggplot2::geom_col(
+    mapping = ggplot2::aes(x = region, y = access_perc, fill = region),
+    width = 0.7,
+    # draw a dot glyph for the levels of fill
+    key_glyph = "dotplot"
+  ) +
+  ggplot2::facet_wrap(
+    ggplot2::vars(type),
+    # arrange facets in one row
+    nrow = 1,
+    # place the facet strip label at the bottom
+    strip.position = "bottom"
+  ) +
+  ggplot2::scale_fill_manual(values = region_colors) +
+  # use ggrepel so that there's a line to each value
+  # avoids having to write another layer
+  ggrepel::geom_label_repel(
+    ggplot2::aes(
+      x = region,
+      y = access_perc,
+      label = scales::label_percent(
+        suffix = "%",
+        scale = 1,
+        accuracy = 0.1
+      )(access_perc),
+      segment.color = rep(region_colors, 3), # note: repeat colors per facet
+      segment.size = 1,
+      fontface = "bold"
+    ),
+    # always draw a line from data to the label
+    min.segment.length = 0,
+    # adjust label box
+    box.padding = 0, # padding around the text label box
+    label.padding = 0.25, # padding around label
+    label.size = NA, # remove the box around the label
+    # increase the size of the text
+    size = 4,
+    # move it 3 above the data position
+    nudge_y = 5
+  ) +
+  ggplot2::guides(
+    fill = ggplot2::guide_legend(
+      byrow = TRUE, 
+      # increase the size of the glyphs
+      override.aes = list(size = 1))
+  ) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.1))) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    # remove grid lines
+    panel.grid = ggplot2::element_blank(),
+    # remove axis text
+    axis.text = ggplot2::element_blank(),
+    axis.title = ggplot2::element_blank(),
+    # add x-axis line
+    axis.line.x = ggplot2::element_line(),
+    # legend
+    legend.title = ggplot2::element_blank(),
+    legend.key.size = ggplot2::unit(1, "cm"),
+    legend.spacing.y = ggplot2::unit(0.1, 'mm'),
+    # put facet strip below the x-axis
+    # see supplementary answer here: https://stackoverflow.com/questions/3261597/change-the-position-of-the-strip-label-in-ggplot-from-the-top-to-the-bottom
+    strip.background = ggplot2::element_blank(),
+    strip.placement = "outside"
+  )
+
+```
+
+## MTF Attributes
+
+An h3 heading 👇
+
+### Capacity
+
+[Figure 17 &middot;]{custom-style='Figure num 2'} [Distribution of availability attribute (nationwide, urban, and rural)]{custom-style='Figure title 2'}
+
+<!-- ::: {custom-style='Figure num'}
+Figure 17 &middot;
+:::
+::: {custom-style='Figure title'}
+Distribution of availability attribute (nationwide, urban, and rural)
+::: -->
+
+Stacked bar chart with images/icons as labels
+
+```{r}
+#| label: data for figure 17
+capacity_distribution <- tibble::tribble(
+  ~ area, ~ level, ~ perc,
+  # nationwide
+  "Nationwide", "Less than 3 W", 54.0,
+  "Nationwide", "3-49 W", 12.7,
+  "Nationwide", "50-199 W", NA,
+  "Nationwide", "200-799 W", NA,
+  "Nationwide", "800-1,999 W", NA,
+  "Nationwide", "More than 2 kW", 33.1,
+  # urban
+  "Urban", "Less than 3 W", 3.2,
+  "Urban", "3-49 W", NA,
+  "Urban", "50-199 W", NA,
+  "Urban", "200-799 W", NA,
+  "Urban", "800-1,999 W", NA,
+  "Urban", "More than 2 kW", 96.2,
+  # rural
+  "Rural", "Less than 3 W", 70.8,
+  "Rural", "3-49 W", 16.8,
+  "Rural", "50-199 W", NA,
+  "Rural", "200-799 W", NA,
+  "Rural", "800-1,999 W", NA,
+  "Rural", "More than 2 kW", 12.2,
+) |>
+dplyr::mutate(
+  dplyr::across(
+    .cols = c(area, level),
+    .fns = ~ forcats::fct_inorder(.x)
+  )
+)
+```
+
+
+```{r}
+#| label: sketch figure 17
+#| fig-width: 10
+#| fig-height: 5.625
+#| fig-align: center
+
+axis_labels <- c(
+  "<img src='assets/country.png' width='50'>",
+  "<img src='assets/urban.png' width='30'>",
+  "<img src='assets/rural.png' width='40'>"
+)
+
+ggplot2::ggplot(
+  data = capacity_distribution,
+  mapping = ggplot2::aes(
+    x = forcats::fct_rev(area),
+    y = perc,
+    fill = forcats::fct_rev(level)
+  )
+) +
+  ggplot2::geom_col(width = 0.7) +
+  ggplot2::scale_fill_manual(values = rev(tier_colors)) +
+  ggplot2::coord_flip() +
+  ggplot2::geom_text(
+    ggplot2::aes(
+      label = scales::label_percent(
+        suffix = "%",
+        scale = 1,
+        accuracy = 0.1
+      )(perc)
+    ),
+    position = ggplot2::position_stack(vjust = 0.5),
+    size = 5,
+    color = "white"
+  ) +
+  ggplot2::scale_x_discrete(
+    name = NULL,
+    labels = rev(axis_labels)
+  ) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0,0))) +
+  ggplot2::guides(
+    fill = ggplot2::guide_legend(
+      nrow = 1, 
+      reverse = TRUE
+    )
+  ) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    panel.grid = ggplot2::element_blank(),
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y = ggtext::element_markdown(hjust = 0.5),
+    axis.line.y = ggplot2::element_line(),
+    axis.text.x = ggplot2::element_blank(),
+    axis.title.x = ggplot2::element_blank(),
+    legend.position = "bottom",
+    legend.title = ggplot2::element_blank()
+  )
+
+```
+
+[FIGURE 28 •]{custom-style="Figure num 2"}
+[Distribution of Appliance Ownership for Grid-Connected Households by Tiers (Rural/ Urban)]{custom-style="Figure title 2"}
+
+Chart with a lightened logo/image as a "watermark". Note: the pixelation/quality of the image is because of how it was sourced. In the absence of the original image, the logo/image was snipped from a zoomed-in version of the report, leading to degredation in the quality of the raster image.
+
+```{r}
+#| label: data for figure 28
+appliance_load_df <- tibble::tribble(
+  ~ tier, ~ load, ~ perc,
+  # tier 0
+  "Tier 0", "Very low load", NA,
+  "Tier 0", "Low load", NA,
+  "Tier 0", "Medium load", 0.1,
+  "Tier 0", "High load", NA,
+  "Tier 0", "Very high load", NA,
+  # tier 1
+  "Tier 1", "Very low load", 0.7,
+  "Tier 1", "Low load", 0.7,
+  "Tier 1", "Medium load", 0.5,
+  "Tier 1", "High load", 0.3,
+  "Tier 1", "Very high load", 0.1,
+  # tier 2
+  "Tier 2", "Very low load", 3.1,
+  "Tier 2", "Low load", 4.6,
+  "Tier 2", "Medium load", 2.6,
+  "Tier 2", "High load", 0.4,
+  "Tier 2", "Very high load", 0.6,
+  # tier 3
+  "Tier 3", "Very low load", 11.9,
+  "Tier 3", "Low load", 20.0,
+  "Tier 3", "Medium load", 14.8,
+  "Tier 3", "High load", 4.0,
+  "Tier 3", "Very high load", 1.7,
+  # tier 4
+  "Tier 4", "Very low load", 4.6,
+  "Tier 4", "Low load", 8.1,
+  "Tier 4", "Medium load", 6.5,
+  "Tier 4", "High load", 2.3,
+  "Tier 4", "Very high load", 0.4,
+  # tier 5
+  "Tier 5", "Very low load", 2.8,
+  "Tier 5", "Low load", 4.6,
+  "Tier 5", "Medium load", 3.7,
+  "Tier 5", "High load", 0.5,
+  "Tier 5", "Very high load", 0.2,
+) |>
+dplyr::mutate(
+  dplyr::across(
+    .cols = c(tier, load),
+    .fns = ~ forcats::fct_inorder(.x)
+  )
+)
+```
+
+```{r}
+#| label: sketch of figure 28
+#| fig-width: 10
+#| fig-height: 5.625
+#| fig-align: center
+
+plot <- appliance_load_df |>
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(x = tier, y = perc, fill = forcats::fct_rev(load))
+  ) +
+  ggplot2::geom_col(width = 0.5) +
+  ggplot2::scale_fill_manual(values = rev(tier_colors)) +
+  ggplot2::geom_text(
+    ggplot2::aes(
+      label = dplyr::case_when(
+        perc > 1.5 ~ perc,
+        TRUE ~ NA
+      )
+    ),
+    position = ggplot2::position_stack(vjust = 0.5),
+    color = "white",
+    size = 5
+  ) +
+  ggrepel::geom_label_repel(
+    ggplot2::aes(
+      label = dplyr::case_when(
+        perc <= 1.5 ~ perc,
+        TRUE ~ NA
+      )
+    ),
+    position = ggpp::position_stacknudge(
+      vjust = 0.5,
+      x = 0.5
+    ),
+    # ggplot2::position_stack(vjust = 0.5),
+    # position = ggplot2::position_stack(vjust = 0.5),
+    min.segment.length = 0,
+    # direction = "y",
+    # force = 5,
+    force_pull = 0.5,
+    # segment.curvature = -0.1,
+    # hjust = 1,
+    # segment.ncp = 2,
+    # segment.inflect = TRUE,
+    # segment.angle = 180,
+    # nudge_x = 0.5,
+    # position = ggplot2::position_stack(vjust = 0.5)
+  ) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.1))) +
+  ggplot2::theme_minimal() +
+  ggplot2::guides(
+    fill = ggplot2::guide_legend(
+      reverse = TRUE,
+      override.aes = list(shape = 16)
+    )
+  ) +
+  ggplot2::theme(
+    panel.grid = ggplot2::element_blank(),
+    axis.title.x = ggplot2::element_blank(),
+    axis.text.x = ggplot2::element_text(
+      face = "bold",
+      size = ggplot2::rel(1.5)
+    ),
+    axis.line.x = ggplot2::element_line(),
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y = ggplot2::element_blank(),
+    legend.title = ggplot2::element_blank(),
+  )
+
+image <- magick::image_read(fs::path("assets", "urban.png")) |>
+magick::image_colorize(50, "white")
+
+cowplot::ggdraw() +
+  cowplot::draw_image(
+    image = image,
+    scale = 0.85,
+    hjust = 0,
+    vjust = 0,
+    halign = 0,
+    valign = 0
+  ) +
+  cowplot::draw_plot(plot)
+
+```
